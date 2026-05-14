@@ -1,16 +1,69 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="UTF-8">
+<title>Music Player</title>
+<style>
+  body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+  #nowPlaying { font-size: 1.2em; margin-bottom: 10px; }
+  .track { cursor: pointer; padding: 6px; margin: 4px 0; background: white; border-radius: 4px; }
+  .track:hover { background: #e0e0e0; }
+  .active { background: #cce5ff; }
+</style>
+</head>
 <body>
-  <h1>My Audio Player</h1>
 
-  <audio controls>
-    <source src="song1.wav" type="audio/wav">
-    Your browser does not support the audio element.
-  </audio>
+<h1>My Music Player</h1>
+<div id="nowPlaying">Nothing playing</div>
 
-  <audio controls>
-    <source src="song2.wav" type="audio/wav">
-  </audio>
+<audio id="player" controls></audio>
+
+<h2>Playlist</h2>
+<div id="playlist"></div>
+
+<script>
+// 🔧 EDIT THIS LIST to match your actual MP3 filenames
+const tracks = [
+  "song1.mp3",
+  "song2.mp3",
+  "song3.mp3"
+];
+
+const playlistDiv = document.getElementById("playlist");
+const player = document.getElementById("player");
+const nowPlaying = document.getElementById("nowPlaying");
+
+let currentIndex = 0;
+
+// Build playlist UI
+tracks.forEach((track, index) => {
+  const div = document.createElement("div");
+  div.textContent = track;
+  div.className = "track";
+  div.onclick = () => playTrack(index);
+  playlistDiv.appendChild(div);
+});
+
+function playTrack(index) {
+  currentIndex = index;
+  player.src = tracks[index];
+  player.play();
+  updateUI();
+}
+
+function updateUI() {
+  nowPlaying.textContent = "Now playing: " + tracks[currentIndex];
+  [...playlistDiv.children].forEach((el, i) => {
+    el.classList.toggle("active", i === currentIndex);
+  });
+}
+
+// Auto‑advance when a song ends
+player.onended = () => {
+  currentIndex = (currentIndex + 1) % tracks.length;
+  playTrack(currentIndex);
+};
+</script>
 
 </body>
 </html>
